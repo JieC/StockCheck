@@ -1,0 +1,4 @@
+cron:
+- description: Refresh stock info
+  url: /ref
+  schedule: every 15 mins
