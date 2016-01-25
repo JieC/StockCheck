@@ -2,10 +2,11 @@
 
 # import the Bottle framework
 from bottle import Bottle
-from bottle import request,debug,template
+from bottle import request,debug,template,redirect
 from google.appengine.api import urlfetch
 from google.appengine.ext import ndb
 from xml.etree import ElementTree
+from datetime import datetime
 
 
 
@@ -27,17 +28,28 @@ def main():
 @bottle.route('/ref')
 def refresh():
     base_url = 'http://www.microsoftstore.com/store?Action=DisplayPage&Locale=en_US&SiteID=msusa&id=ProductInventoryStatusXmlPage&productID='
-    q = Product.query().fetch()
-    for p in q:
-        url = base_url + p.key.id()
+    products = Product.query().fetch()
+    for product in products:
+        url = base_url + product.key.id()
         result = urlfetch.fetch(url)
         if result.status_code == 200:
-            xml = ElementTree.fromstring(result.content)
-            stock = xml.findtext(".//inventoryStatus")
-            p.instock = True if stock == 'PRODUCT_INVENTORY_IN_STOCK' else False
-            p.put()
-            # PRODUCT_INVENTORY_IN_STOCK PRODUCT_INVENTORY_OUT_OF_STOCK
+            try:
+                xml = ElementTree.fromstring(result.content)
+                stock = xml.findtext(".//inventoryStatus")
+            except:
+                stock = 'Invalid ID'
 
+            if stock == 'PRODUCT_INVENTORY_IN_STOCK':
+                if product.instock == 'No':
+                    print('send mail')
+                product.instock = 'Yes'
+            elif stock == 'PRODUCT_INVENTORY_OUT_OF_STOCK':
+                product.instock = 'No'
+            else:
+                product.instock = stock
+
+            product.put()
+        
 @bottle.route('/add')
 def add():
     return '''
@@ -52,13 +64,16 @@ def add():
 def do_add():
     pid = request.forms.get('pid').strip()
     pname = request.forms.get('pname')
-    product = Product(id=pid, pname=pname)
+    product = Product(id=pid, pname=pname, instock='Pedning')
     product.put()
+    redirect('/ref')
 
-@bottle.route('/del')
+@bottle.route('/del', method='POST')
 def do_del():
-    product_key =  ndb.Key(Product, '123')
+    pid = request.forms.get('pid')
+    product_key =  ndb.Key(Product, pid)
     product_key.delete()
+    redirect('/')
 
 @bottle.route('/up')
 def do_del():
@@ -75,6 +90,6 @@ def error_404(error):
 
 class Product(ndb.Model):
     pname = ndb.StringProperty(indexed=False)
-    instock = ndb.BooleanProperty(indexed=False)
+    instock = ndb.StringProperty(indexed=False)
     rdate = ndb.DateTimeProperty(auto_now=True)
 
