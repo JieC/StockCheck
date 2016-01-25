@@ -51,17 +51,19 @@
 			<th>Product Name</th>
 			<th>In Stock?</th>
 			<th>Last Check Date</th>
+      <th>Delete</th>
 		  </tr>
     	% for p in q:
-        <tr class="">
+        <tr>
         <td><a href="http://www.microsoftstore.com/store/msusa/en_US/pdp/productID.{{p.key.id()}}">{{p.key.id()}}</a></td>
         <td>{{p.pname}}</td>
         <td
-          % if p.instock:
+          % if p.instock == 'Yes':
             class="success"
           % end
         >{{p.instock}}</td>
-        <td>{{p.rdate}}</td>
+        <td>{{p.rdate.replace(microsecond=0).isoformat(' ')}}</td>
+        <td><button class='btn btn-primary btn-xs'>X</button></td>
         </tr>
       % end
 		</table>
