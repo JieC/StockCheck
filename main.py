@@ -2,7 +2,7 @@
 
 # import the Bottle framework
 from bottle import Bottle
-from bottle import request,debug,template,redirect
+from bottle import request,debug,template,redirect,static_file
 from google.appengine.api import urlfetch
 from google.appengine.ext import ndb
 from xml.etree import ElementTree
@@ -22,6 +22,10 @@ debug(True)
 def main():
     q = Product.query().fetch()
     return template('main_template', q=q)
+
+@bottle.route('/static/<filename>')
+def server_static(filename):
+    return static_file(filename, root='./static')
 
 @bottle.route('/ref')
 def refresh():
@@ -53,7 +57,7 @@ def refresh():
 def do_add():
     pid = request.forms.get('pid').strip()
     pname = request.forms.get('pname')
-    product = Product(id=pid, pname=pname, instock='Pedning')
+    product = Product(id=pid, pname=pname, instock='Pending')
     product.put()
     redirect('/')
 
@@ -62,7 +66,7 @@ def do_del():
     pid = request.forms.get('pid')
     product_key =  ndb.Key(Product, pid)
     product_key.delete()
-    redirect('/')
+    return 'success'
 
 @bottle.route('/up')
 def do_update():
