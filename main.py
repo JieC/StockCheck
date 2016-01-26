@@ -84,16 +84,16 @@ def error_404(error):
 class Product(ndb.Model):
     pname = ndb.StringProperty(indexed=False)
     instock = ndb.StringProperty(indexed=False)
-    rdate = ndb.DateTimeProperty(auto_now=True)
+    rdate = ndb.DateTimeProperty(auto_now=True,indexed=False)
 
 def send_mail(pid, pname):
     message = mail.EmailMessage(sender='noreply@istockcheck.appspotmail.com',
                                 subject='Back in Stock Notification')
     message.to = 'jchen@live.it'
     message.html = '''
-    Your Product is back in stock now:
-    {pname}
-    <a href="http://www.microsoftstore.com/store/msusa/en_US/pdp/productID.{pid}">Click</a>
+    <h4>Your Product is back in stock now:</h4>
+    <p>{pname}</p>
+    <a href="http://www.microsoftstore.com/store/msusa/en_US/pdp/productID.{pid}">Click to Buy</a>
     '''.format(pid=pid, pname=pname)
     message.send()
 
