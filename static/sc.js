@@ -1,4 +1,4 @@
-document.ready(function() {
+$(document).ready(function() {
   $('td:nth-child(3)').each(function() {
     var $this = $(this);
     switch ($this.text()) {

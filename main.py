@@ -43,7 +43,7 @@ def refresh():
 
             if stock == 'PRODUCT_INVENTORY_IN_STOCK':
                 if product.instock == 'No':
-                    print('send mail')
+                    send_mail(product.key.id(), product.pname)
                 product.instock = 'Yes'
             elif stock == 'PRODUCT_INVENTORY_OUT_OF_STOCK':
                 product.instock = 'No'
@@ -85,4 +85,15 @@ class Product(ndb.Model):
     pname = ndb.StringProperty(indexed=False)
     instock = ndb.StringProperty(indexed=False)
     rdate = ndb.DateTimeProperty(auto_now=True)
+
+def send_mail(pid, pname):
+    message = mail.EmailMessage(sender='noreply@istockcheck.appspotmail.com',
+                                subject='Back in Stock Notification')
+    message.to = 'jchen@live.it'
+    message.body = '''
+    Your Product is back in stock now:
+    {pname}
+    <a href="http://www.microsoftstore.com/store/msusa/en_US/pdp/productID.{pid}">Click</a>
+    '''.format(pid=pid, pname=pname)
+    message.send()
 
