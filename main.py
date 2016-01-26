@@ -3,7 +3,7 @@
 # import the Bottle framework
 from bottle import Bottle
 from bottle import request,debug,template,redirect,static_file
-from google.appengine.api import urlfetch
+from google.appengine.api import urlfetch,mail
 from google.appengine.ext import ndb
 from xml.etree import ElementTree
 from datetime import datetime
@@ -90,7 +90,7 @@ def send_mail(pid, pname):
     message = mail.EmailMessage(sender='noreply@istockcheck.appspotmail.com',
                                 subject='Back in Stock Notification')
     message.to = 'jchen@live.it'
-    message.body = '''
+    message.html = '''
     Your Product is back in stock now:
     {pname}
     <a href="http://www.microsoftstore.com/store/msusa/en_US/pdp/productID.{pid}">Click</a>
