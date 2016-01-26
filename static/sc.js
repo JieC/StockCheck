@@ -1,4 +1,9 @@
 $(document).ready(function() {
+  $('td:nth-child(4)').each(function() {
+    var $this = $(this);
+    $this.text(new Date($this.text() + ' UTC').toLocaleString());
+  });
+
   $('td:nth-child(3)').each(function() {
     var $this = $(this);
     switch ($this.text()) {
