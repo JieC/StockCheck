@@ -22,8 +22,6 @@ debug(True)
 def main():
     q = Product.query().fetch()
     return template('main_template', q=q)
-#    for p in q:
-#        return p.key.id()
 
 @bottle.route('/ref')
 def refresh():
@@ -50,15 +48,6 @@ def refresh():
 
             product.put()
         
-@bottle.route('/add')
-def add():
-    return '''
-        <form action="/add" method="post">
-            Product ID: <input name="pid" type="text" />
-            Product Name: <input name="pname" type="text" />
-            <input value="Add" type="submit" />
-        </form>
-    '''
 
 @bottle.route('/add', method='POST')
 def do_add():
@@ -66,7 +55,7 @@ def do_add():
     pname = request.forms.get('pname')
     product = Product(id=pid, pname=pname, instock='Pedning')
     product.put()
-    redirect('/ref')
+    redirect('/')
 
 @bottle.route('/del', method='POST')
 def do_del():
@@ -76,7 +65,7 @@ def do_del():
     redirect('/')
 
 @bottle.route('/up')
-def do_del():
+def do_update():
     product_key =  ndb.Key(Product, '123')
     product = product_key.get()
     product.rdate = product.rdate
