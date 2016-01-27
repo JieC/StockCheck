@@ -87,9 +87,11 @@ class Product(ndb.Model):
     rdate = ndb.DateTimeProperty(auto_now=True,indexed=False)
 
 def send_mail(pid, pname):
+    email_key =  ndb.Key('Mail', '1')
+    email = email_key.get()
     message = mail.EmailMessage(sender='noreply@istockcheck.appspotmail.com',
                                 subject='Back in Stock Notification')
-    message.to = 'jchen@live.it'
+    message.to = email.mail
     message.html = '''
     <h4>Your Product is back in stock now:</h4>
     <p>{pname}</p>
