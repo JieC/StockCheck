@@ -85,6 +85,9 @@ class Product(ndb.Model):
     pname = ndb.StringProperty(indexed=False)
     instock = ndb.StringProperty(indexed=False)
     rdate = ndb.DateTimeProperty(auto_now=True,indexed=False)
+    
+class Mail(ndb.Model):
+    mail = ndb.StringProperty(indexed=False)
 
 def send_mail(pid, pname):
     email_key =  ndb.Key('Mail', '1')
