@@ -34,7 +34,7 @@
           <li class="active"><a href="#">Home</a></li>
           <li><a href="#">About</a></li>
         </ul>
-        <form class="navbar-form navbar-right" role="add" action='/2.html' method="post">
+        <form class="navbar-form navbar-right" role="add" action='/add' method="post">
           <div class="form-group">
             <select class="form-control" name="pstore">
 			    <option>Microsoft</option>
@@ -53,6 +53,7 @@
   <div class="container">
     <table class="table table-striped">
       <tr>
+        <th>Store</th>
         <th>Product ID</th>
         <th>Product Name</th>
         <th>In Stock?</th>
@@ -60,8 +61,13 @@
         <th>Delete</th>
       </tr>
       % for p in q:
+        <td>{{p.store}}</td>
       <tr>
-        <td><a href="http://www.microsoftstore.com/store/msusa/en_US/pdp/productID.{{p.key.id()}}">{{p.key.id()}}</a></td>
+        %if p.store == 'Microsoft':
+          <td><a href="http://www.microsoftstore.com/store/msusa/en_US/pdp/productID.{{p.key.id()}}">{{p.key.id()}}</a></td>
+        %elif p.store == 'Walmart':
+          <td><a href="http://http://www.walmart.com/ip/{{p.key.id()}}">{{p.key.id()}}</a></td>
+        %end
         <td>{{p.pname}}</td>
         <td>{{p.instock}}</td>
         <td>{{p.rdate.replace(microsecond=0).isoformat()}}</td>
