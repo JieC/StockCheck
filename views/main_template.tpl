@@ -61,8 +61,8 @@
         <th>Delete</th>
       </tr>
       % for p in q:
-        <td>{{p.store}}</td>
       <tr>
+        <td>{{p.store}}</td>
         %if p.store == 'Microsoft':
           <td><a href="http://www.microsoftstore.com/store/msusa/en_US/pdp/productID.{{p.key.id()}}">{{p.key.id()}}</a></td>
         %elif p.store == 'Walmart':
