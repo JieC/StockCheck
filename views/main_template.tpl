@@ -63,14 +63,14 @@
       % for p in q:
       <tr>
         <td>{{p.store}}</td>
+        <td>{{p.pname}}</td>
+        <td>{{p.instock}}</td>
+        <td>{{p.rdate.replace(microsecond=0).isoformat()}}</td>
         %if p.store == 'Microsoft':
           <td><a href="http://www.microsoftstore.com/store/msusa/en_US/pdp/productID.{{p.key.id()}}">{{p.key.id()}}</a></td>
         %elif p.store == 'Walmart':
           <td><a href="http://http://www.walmart.com/ip/{{p.key.id()}}">{{p.key.id()}}</a></td>
         %end
-        <td>{{p.pname}}</td>
-        <td>{{p.instock}}</td>
-        <td>{{p.rdate.replace(microsecond=0).isoformat()}}</td>
         <td><button class='btn btn-primary btn-xs'>X</button></td>
       </tr>
       % end
