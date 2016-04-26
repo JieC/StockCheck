@@ -7,6 +7,7 @@ from google.appengine.api import urlfetch,mail
 from google.appengine.ext import ndb
 from xml.etree import ElementTree
 from datetime import datetime
+import logging
 
 
 
@@ -46,7 +47,7 @@ def server_static(filename):
 @bottle.route('/ref')
 @bottle.route('/ref/<name>')
 def refresh(name='Microsoft'):
-    products = Product.query().fetch()
+    products = Product.query(Product.store == name).fetch()
     for product in products:
         url = s[name]['qurl'].format(pid=product.key.id())
         result = urlfetch.fetch(url)
@@ -117,5 +118,6 @@ def send_mail(pid, pname, store):
     <p>{pname}</p>
     <a href="{purl}">Click to Buy</a>
     '''.format(purl=s[store]['purl'].format(pid=pid), pname=pname)
+    logging.debug(message.html)
     message.send()
 
