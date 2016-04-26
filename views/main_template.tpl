@@ -57,15 +57,15 @@
         <th>Product Name</th>
         <th>In Stock?</th>
         <th>Last Check Date</th>
-        <th>Delete</th>
         <th>Store</th>
+        <th>Delete</th>
       </tr>
       % for p in q:
       <tr>
         %if p.store == 'Microsoft':
           <td><a href="http://www.microsoftstore.com/store/msusa/en_US/pdp/productID.{{p.key.id()}}">{{p.key.id()}}</a></td>
         %elif p.store == 'Walmart':
-          <td><a href="http://http://www.walmart.com/ip/{{p.key.id()}}">{{p.key.id()}}</a></td>
+          <td><a href="http://www.walmart.com/ip/{{p.key.id()}}">{{p.key.id()}}</a></td>
         %end
         <td>{{p.pname}}</td>
         <td>{{p.instock}}</td>

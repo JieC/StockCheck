@@ -44,7 +44,12 @@ def main():
 def server_static(filename):
     return static_file(filename, root='./static')
 
-@bottle.route('/ref')
+@bottle.route('/refall')
+def refall():
+    products = Product.query().fetch()
+    for product in products:
+        product.put()
+ 
 @bottle.route('/ref/<name>')
 def refresh(name='Microsoft'):
     products = Product.query(Product.store == name).fetch()
@@ -74,6 +79,7 @@ def refresh(name='Microsoft'):
 def do_add():
     pid = request.forms.get('pid').strip()
     pname = request.forms.get('pname')
+    pstore = request.forms.get('pstore')
     product = Product(id=pid, pname=pname, instock='Pending', store=pstore)
     product.put()
     redirect('/')
@@ -102,7 +108,7 @@ class Product(ndb.Model):
     pname = ndb.StringProperty(indexed=False)
     instock = ndb.StringProperty(indexed=False)
     rdate = ndb.DateTimeProperty(auto_now=True,indexed=False)
-    store = ndb.StringProperty(default='Microsoft',indexed=False)
+    store = ndb.StringProperty(default='Microsoft')
     
 class Mail(ndb.Model):
     mail = ndb.StringProperty(indexed=False)
