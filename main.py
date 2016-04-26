@@ -55,7 +55,7 @@ def refresh(name='Microsoft'):
     products = Product.query(Product.store == name).fetch()
     for product in products:
         url = s[name]['qurl'].format(pid=product.key.id())
-        result = urlfetch.fetch(url)
+        result = urlfetch.fetch(url, deadline=15)
         if result.status_code == 200:
             try:
                 xml = ElementTree.fromstring(result.content)
