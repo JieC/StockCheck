@@ -53,12 +53,12 @@
   <div class="container">
     <table class="table table-striped">
       <tr>
-        <th>Store</th>
         <th>Product ID</th>
         <th>Product Name</th>
         <th>In Stock?</th>
         <th>Last Check Date</th>
         <th>Delete</th>
+        <th>Store</th>
       </tr>
       % for p in q:
       <tr>

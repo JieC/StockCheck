@@ -16,6 +16,22 @@ debug(True)
 # Note: We don't need to call run() since our application is embedded within
 # the App Engine WSGI application server.
 
+s = {
+    'Microsoft': {
+        'qurl': 'http://www.microsoftstore.com/store?Action=DisplayPage&Locale=en_US&SiteID=msusa&id=ProductInventoryStatusXmlPage&productID={pid}',
+        'purl': 'http://www.microsoftstore.com/store/msusa/en_US/pdp/productID.{pid}',
+        'in': 'PRODUCT_INVENTORY_IN_STOCK',
+        'out': 'PRODUCT_INVENTORY_OUT_OF_STOCK',
+        'path': './/inventoryStatus'
+    },
+    'Walmart': {
+        'qurl': 'http://api.walmartlabs.com/v1/items/{pid}?apiKey=sbwsb4avhzmze33bges5yunr&format=xml',
+        'purl': 'http://www.walmart.com/ip/{pid}',
+        'in': 'Available',
+        'out': 'Not available',
+        'path': './/stock'
+    }
+}
 
 # Define an handler for the root URL of our application.
 @bottle.route('/')
@@ -28,24 +44,24 @@ def server_static(filename):
     return static_file(filename, root='./static')
 
 @bottle.route('/ref')
-def refresh():
-    base_url = 'http://www.microsoftstore.com/store?Action=DisplayPage&Locale=en_US&SiteID=msusa&id=ProductInventoryStatusXmlPage&productID='
+@bottle.route('/ref/<name>')
+def refresh(name='Microsoft'):
     products = Product.query().fetch()
     for product in products:
-        url = base_url + product.key.id()
+        url = s[name]['qurl'].format(pid=product.key.id())
         result = urlfetch.fetch(url)
         if result.status_code == 200:
             try:
                 xml = ElementTree.fromstring(result.content)
-                stock = xml.findtext(".//inventoryStatus")
+                stock = xml.findtext(s[name]['path'])
             except:
                 stock = 'Invalid ID'
 
-            if stock == 'PRODUCT_INVENTORY_IN_STOCK':
+            if stock == s[name]['in']:
                 if product.instock == 'No':
-                    send_mail(product.key.id(), product.pname)
+                    send_mail(product.key.id(), product.pname, product.store)
                 product.instock = 'Yes'
-            elif stock == 'PRODUCT_INVENTORY_OUT_OF_STOCK':
+            elif stock == s[name]['out']:
                 product.instock = 'No'
             else:
                 product.instock = stock
@@ -57,7 +73,7 @@ def refresh():
 def do_add():
     pid = request.forms.get('pid').strip()
     pname = request.forms.get('pname')
-    product = Product(id=pid, pname=pname, instock='Pending')
+    product = Product(id=pid, pname=pname, instock='Pending', store=pstore)
     product.put()
     redirect('/')
 
@@ -85,11 +101,12 @@ class Product(ndb.Model):
     pname = ndb.StringProperty(indexed=False)
     instock = ndb.StringProperty(indexed=False)
     rdate = ndb.DateTimeProperty(auto_now=True,indexed=False)
+    store = ndb.StringProperty(default='Microsoft',indexed=False)
     
 class Mail(ndb.Model):
     mail = ndb.StringProperty(indexed=False)
 
-def send_mail(pid, pname):
+def send_mail(pid, pname, store):
     email_key =  ndb.Key('Mail', '1')
     email = email_key.get()
     message = mail.EmailMessage(sender='noreply@istockcheck.appspotmail.com',
@@ -98,7 +115,7 @@ def send_mail(pid, pname):
     message.html = '''
     <h4>Your Product is back in stock now:</h4>
     <p>{pname}</p>
-    <a href="http://www.microsoftstore.com/store/msusa/en_US/pdp/productID.{pid}">Click to Buy</a>
-    '''.format(pid=pid, pname=pname)
+    <a href="{purl}">Click to Buy</a>
+    '''.format(purl=s[store]['purl'].format(pid=pid), pname=pname)
     message.send()
 
