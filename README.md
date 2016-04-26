@@ -1,1 +1,1 @@
-## Microsoft Store Stock Check
+## Product Stock Checker for Microsoft and Walmart
