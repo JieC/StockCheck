@@ -36,11 +36,7 @@
         </ul>
         <form class="navbar-form navbar-right" role="add" action='/add' method="post">
           <div class="form-group">
-            <select class="form-control" name="pstore">
-			    <option>Microsoft</option>
-			    <option>Walmart</option>
-			  </select>
-            <input type="text" class="form-control" name="pid" placeholder="ID">
+            <input type="text" class="form-control" name="purl" placeholder="URL">
             <input type="text" class="form-control" name="pname" placeholder="Name">
           </div>
           <button type="submit" class="btn btn-primary">Add</button>
@@ -57,20 +53,14 @@
         <th>Product Name</th>
         <th>In Stock?</th>
         <th>Last Check Date</th>
-        <th>Store</th>
         <th>Delete</th>
       </tr>
       % for p in q:
       <tr>
-        %if p.store == 'Microsoft':
-          <td><a href="http://www.microsoftstore.com/store/msusa/en_US/pdp/productID.{{p.key.id()}}">{{p.key.id()}}</a></td>
-        %elif p.store == 'Walmart':
-          <td><a href="http://www.walmart.com/ip/{{p.key.id()}}">{{p.key.id()}}</a></td>
-        %end
+        <td><a href="{{p.url}}">{{p.key.id()}}</a></td>
         <td>{{p.pname}}</td>
         <td>{{p.instock}}</td>
         <td>{{p.rdate.replace(microsecond=0).isoformat()}}</td>
-        <td>{{p.store}}</td>
         <td><button class='btn btn-primary btn-xs'>X</button></td>
       </tr>
       % end

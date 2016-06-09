@@ -1,8 +1,5 @@
 cron:
-- description: Refresh Microsoft stock info
-  url: /ref/Microsoft
-  schedule: every 1 mins
+- description: Refresh stock info
+  url: /ref
+  schedule: every 5 mins
 
-- description: Refresh Walmart stock info
-  url: /ref/Walmart
-  schedule: every 6 mins
