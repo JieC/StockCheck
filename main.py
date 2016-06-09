@@ -42,7 +42,10 @@ def refall():
 def refresh():
     products = Product.query().fetch()
     for product in products:
-        result = urlfetch.fetch(product.purl, deadline=30)
+        try:
+            result = urlfetch.fetch(product.purl, deadline=30)
+        except:
+            continue
         if result.status_code == 200:
             stock = prog.search(result.content)
             if stock:
@@ -68,7 +71,7 @@ def do_add():
 
 @bottle.route('/del', method='POST')
 def do_del():
-    pid = request.forms.get('pid')
+    pid = int(request.forms.get('pid'))
     product_key = ndb.Key(Product, pid)
     product_key.delete()
     return 'success'
@@ -95,7 +98,7 @@ class Mail(ndb.Model):
 def send_mail(pname, purl):
     email_key = ndb.Key('Mail', '1')
     email = email_key.get()
-    message = mail.EmailMessage(sender='noreply@istockcheck.appspotmail.com',
+    message = mail.EmailMessage(sender='noreply@istockc.appspotmail.com',
                                 subject='Back in Stock Notification')
     message.to = email.mail
     message.html = '''
